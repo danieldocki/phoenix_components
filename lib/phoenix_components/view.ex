@@ -105,17 +105,24 @@ defmodule PhoenixComponents.View do
   def component(namespace, name, attrs, do: block) when is_list(attrs) do
     do_component(namespace, name, block, attrs)
   end
-  
+
   def component(namespace, name, %Phoenix.HTML.Form{} = form, field) when is_atom(field) do
-    do_component(namespace, name, "", [form: form, field: field])
+    do_component(namespace, name, "", form: form, field: field)
   end
 
-  def component(namespace, name, %Phoenix.HTML.Form{} = form, field, attrs) when is_list(attrs) and is_atom(field) do
-    do_component(namespace, name, "", Keyword.merge(attrs, [form: form, field: field]))
+  def component(namespace, name, %Phoenix.HTML.Form{} = form, field, do: block)
+      when is_atom(field) do
+    do_component(namespace, name, block, form: form, field: field)
   end
 
-  def component(namespace, name, %Phoenix.HTML.Form{} = form, field, attrs, do: block) when is_list(attrs) and is_atom(field) do
-    do_component(namespace, name, block, Keyword.merge(attrs, [form: form, field: field]))
+  def component(namespace, name, %Phoenix.HTML.Form{} = form, field, attrs)
+      when is_list(attrs) and is_atom(field) do
+    do_component(namespace, name, "", Keyword.merge(attrs, form: form, field: field))
+  end
+
+  def component(namespace, name, %Phoenix.HTML.Form{} = form, field, attrs, do: block)
+      when is_list(attrs) and is_atom(field) do
+    do_component(namespace, name, block, Keyword.merge(attrs, form: form, field: field))
   end
 
   defp do_component(namespace, name, content, attrs) do
